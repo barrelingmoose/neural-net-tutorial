@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 def sigmoid(x):
     return 1/(1+np.exp(-x))
@@ -21,9 +20,17 @@ class NeuralNetwork:
 
     def backprop(self): 
         d_weights2 = np.dot(self.layer1.T, (2*(self.y - self.output) * sigmoid_derivative(self.output)))
+        d_weights1 = np.dot(self.input.T, (np.dot(2*(self.y - self.output) * sigmoid_derivative(self.output), self.weights2.T) * sigmoid_derivative(self.layer1)))
 
-data = [[0,0], [1,1]]
-data_frame = pd.DataFrame(data)
-objTest = NeuralNetwork(data_frame, data_frame)
-objTest.feedforward()
-objTest.backprop()
+        self.weights1 += d_weights1
+        self.weights2 += d_weights2
+
+x_input = np.array([[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
+y_output = np.array([[0], [1], [1], [0]])
+objTest = NeuralNetwork(x_input, y_output)
+
+for i in range(2000):
+    objTest.feedforward()
+    objTest.backprop()
+
+print(objTest.output)
